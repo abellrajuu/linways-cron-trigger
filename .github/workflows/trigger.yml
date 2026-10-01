@@ -1,0 +1,22 @@
+name: Trigger Private Attendance Bot
+
+on:
+  schedule:
+    # Reliable cron because this repo is PUBLIC!
+    # Every 10 mins during class hours (8:30 AM to 4:30 PM IST = 03:00 to 11:00 UTC) Mon-Sat
+    - cron: '*/10 3-10 * * 1-6'
+    # Every 15 mins in evening (4:30 PM to 10:00 PM IST = 11:00 to 16:30 UTC) Mon-Sat
+    - cron: '*/15 11-16 * * 1-6'
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Private Workflow
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+          https://api.github.com/repos/abellrajuu/linways-attendance-bot/actions/workflows/attendance.yml/dispatches \
+          -d '{"ref":"main"}'
